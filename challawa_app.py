@@ -140,23 +140,46 @@ class DualPumpMonitor:
             1: 'AHU FOR LINE 7 PRODUCTION HALL & SYRUP ROOM',
             2: 'LINE 7 MIXER'
         }
+        self.read_error_count = 0
+        self.max_read_errors = 3
         
     def connect(self):
         try:
+            # Disconnect first if already connected
+            if self.plc.get_connected():
+                self.plc.disconnect()
             self.plc.connect(PLC_IP, PLC_RACK, PLC_SLOT)
-            self.connected = True
-            print(f"✓ Connected to PLC at {PLC_IP}")
-            return True
+            self.connected = self.plc.get_connected()
+            if self.connected:
+                print(f"✓ Connected to PLC at {PLC_IP}")
+                self.read_error_count = 0
+            return self.connected
         except Exception as e:
             print(f"✗ Connection failed: {e}")
             self.connected = False
             return False
     
+    def disconnect(self):
+        try:
+            if self.plc.get_connected():
+                self.plc.disconnect()
+            self.connected = False
+        except:
+            pass
+    
     def read_db39(self):
         """Read data from DB39"""
         try:
+            # Check connection before reading
+            if not self.plc.get_connected():
+                self.connected = False
+                return self._get_error_data()
+            
             # Read 28 bytes from DB39 starting at byte 0
             data = self.plc.db_read(DB_NUMBER, 0, 28)
+            
+            # Reset error count on successful read
+            self.read_error_count = 0
             
             # Parse Pump 1 data
             alarm = get_bool(data, 0, 0)
@@ -202,7 +225,16 @@ class DualPumpMonitor:
                 "connected": True
             }
         except Exception as e:
-            print(f"Read error: {e}")
+            self.read_error_count += 1
+            print(f"Read error ({self.read_error_count}/{self.max_read_errors}): {e}")
+            
+            # If too many consecutive errors, force reconnect
+            if self.read_error_count >= self.max_read_errors:
+                print("Too many read errors, forcing reconnection...")
+                self.disconnect()
+                self.connected = False
+                self.read_error_count = 0
+            
             return self._get_error_data()
     
     def _get_status(self, ready, running, trip):
@@ -242,30 +274,37 @@ class DualPumpMonitor:
     
     def monitor_loop(self):
         """Continuous monitoring loop"""
+        reconnect_delay = 2  # seconds between reconnect attempts
+        
         while self.running:
             if not self.connected:
-                self.connect()
+                if not self.connect():
+                    # Wait before trying to reconnect
+                    time.sleep(reconnect_delay)
+                    continue
             
             if self.connected:
                 data = self.read_db39()
                 
-                # Check for trip events and log them
-                if data['pump1']['trip'] and not self.prev_pump1_trip:
-                    log_trip_event(
-                        1, self.pump_names[1], 'TRIP',
-                        data['pump1']['pressure'], data['pump1']['speed'],
-                        'Pump 1 tripped - fault detected'
-                    )
-                if data['pump2']['trip'] and not self.prev_pump2_trip:
-                    log_trip_event(
-                        2, self.pump_names[2], 'TRIP',
-                        data['pump2']['pressure'], data['pump2']['speed'],
-                        'Pump 2 tripped - fault detected'
-                    )
-                
-                # Update previous states
-                self.prev_pump1_trip = data['pump1']['trip']
-                self.prev_pump2_trip = data['pump2']['trip']
+                # Only process data if we got valid data
+                if data.get('connected', False):
+                    # Check for trip events and log them
+                    if data['pump1']['trip'] and not self.prev_pump1_trip:
+                        log_trip_event(
+                            1, self.pump_names[1], 'TRIP',
+                            data['pump1']['pressure'], data['pump1']['speed'],
+                            'Pump 1 tripped - fault detected'
+                        )
+                    if data['pump2']['trip'] and not self.prev_pump2_trip:
+                        log_trip_event(
+                            2, self.pump_names[2], 'TRIP',
+                            data['pump2']['pressure'], data['pump2']['speed'],
+                            'Pump 2 tripped - fault detected'
+                        )
+                    
+                    # Update previous states
+                    self.prev_pump1_trip = data['pump1']['trip']
+                    self.prev_pump2_trip = data['pump2']['trip']
                 
                 socketio.emit('pump_data', data)
             
@@ -278,8 +317,7 @@ class DualPumpMonitor:
     
     def stop(self):
         self.running = False
-        if self.connected:
-            self.plc.disconnect()
+        self.disconnect()
 
 # Global monitor instance
 monitor = DualPumpMonitor()
