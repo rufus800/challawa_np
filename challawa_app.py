@@ -142,6 +142,8 @@ class DualPumpMonitor:
         }
         self.read_error_count = 0
         self.max_read_errors = 3
+        self.last_data = None  # Store last successful read
+        self.read_count = 0  # Count successful reads
         
     def connect(self):
         try:
@@ -286,8 +288,16 @@ class DualPumpMonitor:
             if self.connected:
                 data = self.read_db39()
                 
+                # Store last data for debugging
+                self.last_data = data
+                
                 # Only process data if we got valid data
                 if data.get('connected', False):
+                    self.read_count += 1
+                    # Print status every 20 reads (10 seconds)
+                    if self.read_count % 20 == 0:
+                        print(f"📊 Data read #{self.read_count}: P1={data['pump1']['pressure']:.2f}bar, P2={data['pump2']['pressure']:.2f}bar")
+                    
                     # Check for trip events and log them
                     if data['pump1']['trip'] and not self.prev_pump1_trip:
                         log_trip_event(
@@ -306,7 +316,11 @@ class DualPumpMonitor:
                     self.prev_pump1_trip = data['pump1']['trip']
                     self.prev_pump2_trip = data['pump2']['trip']
                 
-                socketio.emit('pump_data', data)
+                # Always emit data (even error state)
+                try:
+                    socketio.emit('pump_data', data)
+                except Exception as e:
+                    print(f"Socket emit error: {e}")
             
             time.sleep(CYCLE_TIME)
     
@@ -332,10 +346,23 @@ def get_status():
         return jsonify(monitor.read_db39())
     return jsonify(monitor._get_error_data())
 
+@app.route('/api/debug')
+def get_debug():
+    """Debug endpoint to check system status"""
+    return jsonify({
+        'plc_connected': monitor.connected,
+        'read_count': monitor.read_count,
+        'read_error_count': monitor.read_error_count,
+        'last_data': monitor.last_data,
+        'running': monitor.running
+    })
+
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
-    if monitor.connected:
+    if monitor.connected and monitor.last_data:
+        socketio.emit('pump_data', monitor.last_data)
+    elif monitor.connected:
         socketio.emit('pump_data', monitor.read_db39())
 
 @socketio.on('disconnect')
