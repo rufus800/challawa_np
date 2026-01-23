@@ -15,9 +15,19 @@ from datetime import datetime, timedelta
 import io
 import os
 
+# Try to use eventlet for better async support
+try:
+    import eventlet
+    eventlet.monkey_patch()
+    async_mode = 'eventlet'
+    print("Using eventlet async mode")
+except ImportError:
+    async_mode = 'threading'
+    print("Using threading async mode (install eventlet for better performance)")
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'challawa-pump-monitor-secret'
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins="*", async_mode=async_mode, ping_timeout=60, ping_interval=25)
 
 # PLC Configuration
 PLC_IP = "192.168.200.20"
@@ -1375,7 +1385,58 @@ HTML_TEMPLATE = '''
     </div>
 
     <script>
-        const socket = io();
+        // Socket.IO with reconnection and fallback
+        const socket = io({
+            reconnection: true,
+            reconnectionAttempts: Infinity,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            timeout: 20000,
+            transports: ['polling', 'websocket']
+        });
+
+        let socketConnected = false;
+        let pollingInterval = null;
+
+        // Start fallback polling if socket fails
+        function startPolling() {
+            if (pollingInterval) return;
+            console.log('Starting fallback polling...');
+            pollingInterval = setInterval(() => {
+                fetch('/api/status')
+                    .then(r => r.json())
+                    .then(updateStatus)
+                    .catch(e => console.error('Polling error:', e));
+            }, 1000);
+        }
+
+        function stopPolling() {
+            if (pollingInterval) {
+                console.log('Stopping fallback polling');
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        }
+
+        socket.on('connect', () => {
+            console.log('Socket connected');
+            socketConnected = true;
+            stopPolling();
+        });
+
+        socket.on('disconnect', () => {
+            console.log('Socket disconnected');
+            socketConnected = false;
+            // Start polling as fallback after 2 seconds
+            setTimeout(() => {
+                if (!socketConnected) startPolling();
+            }, 2000);
+        });
+
+        socket.on('connect_error', (error) => {
+            console.log('Socket connection error:', error);
+            if (!pollingInterval) startPolling();
+        });
 
         function updateTimestamp() {
             const now = new Date();
