@@ -1,0 +1,9 @@
+tunnel: TUNNEL_ID_HERE
+credentials-file: /root/.cloudflared/TUNNEL_ID_HERE.json
+
+ingress:
+  - hostname: challawanp.akfotekengineering.com
+    service: http://localhost:5050
+    originRequest:
+      noTLSVerify: true
+  - service: http_status:404
