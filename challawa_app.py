@@ -114,8 +114,8 @@ def get_pump_health_stats():
     conn.close()
     
     pump_names = {
-        1: 'AHU FOR LINE 7 PRODUCTION HALL & SYRUP ROOM',
-        2: 'LINE 7 MIXER'
+        1: 'LINE 7 MIXER',
+        2: 'LINE 7 AHU/SYRUP ROOM'
     }
     
     health_data = []
@@ -147,8 +147,8 @@ class DualPumpMonitor:
         self.prev_pump1_trip = False
         self.prev_pump2_trip = False
         self.pump_names = {
-            1: 'AHU FOR LINE 7 PRODUCTION HALL & SYRUP ROOM',
-            2: 'LINE 7 MIXER'
+            1: 'LINE 7 MIXER',
+            2: 'LINE 7 AHU/SYRUP ROOM'
         }
         self.read_error_count = 0
         self.max_read_errors = 3
@@ -1214,7 +1214,7 @@ HTML_TEMPLATE = '''
                 <!-- PUMP 1 -->
                 <div class="pump-card">
                 <div class="pump-card-header">
-                    <div class="pump-title">AHU FOR LINE 7 PRODUCTION HALL & SYRUP ROOM</div>
+                    <div class="pump-title">LINE 7 MIXER</div>
                     <div class="pump-status-badge" id="p1StatusBadge">Unknown</div>
                 </div>
                 
@@ -1271,7 +1271,7 @@ HTML_TEMPLATE = '''
             <!-- PUMP 2 -->
             <div class="pump-card">
                 <div class="pump-card-header">
-                    <div class="pump-title">LINE 7 MIXER</div>
+                    <div class="pump-title">LINE 7 AHU/SYRUP ROOM</div>
                     <div class="pump-status-badge" id="p2StatusBadge">Unknown</div>
                 </div>
                 
@@ -1344,8 +1344,8 @@ HTML_TEMPLATE = '''
                         <label>Pump</label>
                         <select id="pumpFilter">
                             <option value="">All Pumps</option>
-                            <option value="1">AHU FOR LINE 7</option>
-                            <option value="2">LINE 7 MIXER</option>
+                            <option value="1">LINE 7 MIXER</option>
+                            <option value="2">LINE 7 AHU/SYRUP ROOM</option>
                         </select>
                     </div>
                     <button class="btn btn-primary" onclick="queryReports()">
