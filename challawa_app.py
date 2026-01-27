@@ -4,6 +4,10 @@ Real-time monitoring of Siemens S7-1200 PLC via Snap7
 Monitors Pump 1 and Pump 2 with pressure, speed, and status
 """
 
+import eventlet
+eventlet.monkey_patch()
+
+# Now import all other modules
 from flask import Flask, render_template, jsonify, request, send_file
 from flask_socketio import SocketIO
 import snap7
