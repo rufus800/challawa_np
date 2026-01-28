@@ -1623,12 +1623,6 @@ if __name__ == '__main__':
     init_database()
     print("✓ Database initialized")
     
-    # Create templates directory and save HTML
-    import os
-    os.makedirs('templates', exist_ok=True)
-    with open('templates/index.html', 'w', encoding='utf-8') as f:
-        f.write(HTML_TEMPLATE)
-    
     # Start monitoring
     monitor.start()
     
