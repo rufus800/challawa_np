@@ -1,0 +1,12 @@
+[project]
+name = "challawa-np"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "eventlet>=0.30.0",
+    "flask>=2.0.0",
+    "flask-socketio>=5.0.0",
+    "python-snap7>=1.0",
+]
