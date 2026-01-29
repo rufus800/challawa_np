@@ -479,32 +479,6 @@ def api_health():
     """Get pump health statistics."""
     return jsonify(db.get_pump_health_stats())
 
-
-@app.route("/api/reports/download")
-def api_download_report():
-    """Generate and download HTML report."""
-    start_date = request.args.get("start_date")
-    end_date = request.args.get("end_date")
-    pump_id = request.args.get("pump_id", type=int)
-
-    events = db.get_trip_events(start_date, end_date, pump_id)
-    health = db.get_pump_health_stats()
-
-    html = render_template(
-        "report.html",
-        events=events,
-        health=health,
-        start_date=start_date or "All time",
-        end_date=end_date or "Present",
-        generated_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    )
-
-    return Response(
-        html,
-        mimetype="text/html",
-        headers={"Content-Disposition": "attachment; filename=pump_report.html"}
-    )
-
 # =============================================================================
 # Socket Events
 # =============================================================================

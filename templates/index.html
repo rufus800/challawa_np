@@ -543,13 +543,13 @@
         .section-title { font-size: 32px; font-weight: 100; letter-spacing: -0.02em; }
         .filters-bar {
             display: flex;
-            gap: 16px;
+            gap: 8px;
             flex-wrap: wrap;
             align-items: flex-end;
-            padding: 24px;
+            padding: 12px;
             background: var(--muted);
-            border-radius: 12px;
-            margin-bottom: 32px;
+            border-radius: 10px;
+            margin-bottom: 16px;
         }
         .filter-group { display: flex; flex-direction: column; gap: 4px; }
         .filter-group label {
@@ -713,34 +713,35 @@
             .sidebar-overlay.active { display: block; }
         }
         @media (max-width: 768px) {
-            .dashboard-content { padding: 16px; }
-            .dashboard-header { padding: 0 16px; }
+            .dashboard-content { padding: 8px; }
+            .dashboard-header { padding: 0 8px; }
             .stats-grid { grid-template-columns: 1fr; }
             .metrics-grid { grid-template-columns: 1fr; }
-            .status-row { grid-template-columns: 1fr; }
+            .status-row { grid-template-columns: repeat(3, 1fr); }
             .health-grid { grid-template-columns: 1fr; }
-            .filters-bar { flex-direction: column; align-items: stretch; padding: 16px; gap: 12px; }
+            .filters-bar { flex-direction: column; align-items: stretch; padding: 8px; gap: 6px; }
             .filter-group { width: 100%; }
             .filter-group input, .filter-group select { width: 100%; }
-            .filter-actions { margin-left: 0; flex-direction: column; gap: 8px; }
+            .filter-actions { margin-left: 0; flex-direction: column; gap: 6px; }
             .btn { width: 100%; }
-            .page-title { font-size: 24px; }
-            .section-title { font-size: 24px; }
-            .metric-value { font-size: 28px; }
-            .stat-value { font-size: 24px; }
+            .glass-widget-row { flex-direction: column; gap: 8px !important; }
+            .page-title { font-size: 20px; }
+            .section-title { font-size: 20px; }
+            .metric-value { font-size: 20px; }
+            .stat-value { font-size: 16px; }
             .header-link { display: none; }
-            .health-card { padding: 20px; }
-            .health-score { font-size: 24px; padding: 6px 12px; }
-            .health-card-name { font-size: 16px; }
+            .health-card { padding: 10px; }
+            .health-score { font-size: 16px; padding: 4px 8px; }
+            .health-card-name { font-size: 12px; }
             .health-stats { grid-template-columns: 1fr; }
-            .health-stat-value { font-size: 18px; }
-            .table-container { border-radius: 8px; }
-            .table-header { padding: 16px; }
-            .data-table th, .data-table td { padding: 12px 8px; font-size: 11px; }
+            .health-stat-value { font-size: 12px; }
+            .table-container { border-radius: 6px; }
+            .table-header { padding: 8px; }
+            .data-table th, .data-table td { padding: 6px 4px; font-size: 10px; }
             .data-table th:nth-child(5), .data-table td:nth-child(5),
             .data-table th:nth-child(6), .data-table td:nth-child(6) { display: none; }
-            .table-avatar { width: 24px; height: 24px; font-size: 10px; }
-            .no-data { padding: 32px 16px; font-size: 13px; }
+            .table-avatar { width: 16px; height: 16px; font-size: 8px; }
+            .no-data { padding: 16px 8px; font-size: 10px; }
         }
         @media (max-width: 480px) {
             .dashboard-content { padding: 12px; }
@@ -753,6 +754,7 @@
             .health-card { padding: 16px; }
             .health-card-header { flex-direction: column; gap: 12px; align-items: flex-start; }
             .health-score { align-self: flex-start; }
+            .status-row { grid-template-columns: repeat(3, 1fr); }
             .data-table th:nth-child(4), .data-table td:nth-child(4) { display: none; }
         }
     </style>
@@ -947,7 +949,7 @@
                 <div class="view" id="reportsView">
                     <div class="section-header">
                         <p class="section-label">ANALYTICS</p>
-                        <h2 class="section-title">Trip Event <span class="text-primary">Reports</span></h2>
+                        <h2 class="section-title" style="font-weight:bold;">Telemetry <span class="text-primary">Reports</span></h2>
                     </div>
                     <div class="filters-bar">
                         <div class="filter-group">
@@ -971,6 +973,27 @@
                             <button class="btn btn-success" onclick="downloadReport()">Download</button>
                         </div>
                     </div>
+                    <!-- Glassmorphism widgets -->
+                    <div style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;">
+                        <div class="glass-widget" style="flex:1; min-width:220px; background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center;">
+                            <div style="font-size:16px; color:#6ee7f7; margin-bottom:8px;">Current Pressure</div>
+                            <div id="currentPressure" style="font-size:40px; font-weight:bold; color:#fff; text-shadow:0 0 16px #6ee7f7cc;">--</div>
+                            <div style="font-size:18px; color:#6ee7f7;">Bar</div>
+                        </div>
+                        <div class="glass-widget" style="flex:1; min-width:220px; background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center;">
+                            <div style="font-size:16px; color:#a78bfa; margin-bottom:8px;">Current Frequency</div>
+                            <div id="currentFrequency" style="font-size:40px; font-weight:bold; color:#fff; text-shadow:0 0 16px #a78bfa99;">--</div>
+                            <div style="font-size:18px; color:#a78bfa;">Hz</div>
+                        </div>
+                    </div>
+                    <!-- Central Trend Line Chart -->
+                    <div style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:24px;">
+                        <canvas id="pressureTrendChart" height="120"></canvas>
+                    </div>
+                    <!-- Vertical Bar Chart for Speed -->
+                    <div style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:24px;">
+                        <canvas id="speedBarChart" height="120"></canvas>
+                    </div>
                     <div class="health-grid animate-in" id="healthGrid"></div>
                     <div class="table-container animate-in">
                         <div class="table-header"><span class="table-title">TRIP EVENT LOG</span></div>
@@ -989,6 +1012,7 @@
             </div>
         </main>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const socket = io({ reconnection: true, reconnectionAttempts: Infinity, reconnectionDelay: 1000, timeout: 20000, transports: ['polling', 'websocket'] });
         let socketConnected = false, pollingInterval = null;
@@ -1052,6 +1076,11 @@
             document.getElementById(p + 'RunningBox').classList.toggle('active', d.running);
             document.getElementById(p + 'TripBox').classList.toggle('active', d.trip);
         }
+        // Chart.js chart instances
+        let pressureTrendChart = null;
+        let speedBarChart = null;
+        let pressureData = [];
+        let speedData = [];
         function updateStatus(data) {
             const dot = document.getElementById('connectionDot'), text = document.getElementById('connectionText');
             if (data.connected) { dot.classList.add('connected'); text.textContent = 'Connected'; } else { dot.classList.remove('connected'); text.textContent = 'Disconnected'; }
@@ -1060,15 +1089,130 @@
             alarmAlert.style.display = data.alarm ? 'flex' : 'none';
             updatePump(1, data.pump1); updatePump(2, data.pump2);
 
+            // Update glass widgets
+            document.getElementById('currentPressure').textContent = data.pump1.pressure.toFixed(2) + ' / ' + data.pump2.pressure.toFixed(2);
+            document.getElementById('currentFrequency').textContent = data.pump1.speed.toFixed(1) + ' / ' + data.pump2.speed.toFixed(1);
+
+            // Update trend data (keep last 30 points)
+            if (!window.reportsViewActive) return;
+            if (pressureData.length > 30) { pressureData.shift(); speedData.shift(); }
+            pressureData.push({
+                time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+                p1: data.pump1.pressure,
+                p2: data.pump2.pressure
+            });
+            speedData.push({
+                time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+                p1: data.pump1.speed,
+                p2: data.pump2.speed
+            });
+            if (pressureTrendChart && speedBarChart) {
+                pressureTrendChart.data.labels = pressureData.map(d => d.time);
+                pressureTrendChart.data.datasets[0].data = pressureData.map(d => d.p1);
+                pressureTrendChart.data.datasets[1].data = pressureData.map(d => d.p2);
+                pressureTrendChart.update('none');
+                speedBarChart.data.labels = speedData.map(d => d.time);
+                speedBarChart.data.datasets[0].data = speedData.map(d => d.p1);
+                speedBarChart.data.datasets[1].data = speedData.map(d => d.p2);
+                speedBarChart.update('none');
+            }
         }
         fetch('/api/status').then(r => r.json()).then(updateStatus).catch(e => console.error(e));
+        window.reportsViewActive = false;
         function showView(view, event) {
             if (event) event.preventDefault();
             document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
             if (event) event.target.closest('.nav-item').classList.add('active');
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(view + 'View').classList.add('active');
-            if (view === 'reports') { loadHealthData(); queryReports(); }
+            window.reportsViewActive = (view === 'reports');
+            if (view === 'reports') {
+                loadHealthData();
+                queryReports();
+                // Initialize charts if not already
+                if (!pressureTrendChart) {
+                    const ctx1 = document.getElementById('pressureTrendChart').getContext('2d');
+                    pressureTrendChart = new Chart(ctx1, {
+                        type: 'line',
+                        data: {
+                            labels: [],
+                            datasets: [
+                                {
+                                    label: 'Pump 1 Pressure',
+                                    data: [],
+                                    borderColor: 'rgba(34,245,255,0.9)',
+                                    backgroundColor: 'rgba(34,245,255,0.1)',
+                                    borderWidth: 3,
+                                    pointRadius: 0,
+                                    tension: 0.4,
+                                    shadowColor: '#6ee7f7',
+                                    shadowBlur: 16,
+                                    fill: false,
+                                },
+                                {
+                                    label: 'Pump 2 Pressure',
+                                    data: [],
+                                    borderColor: 'rgba(167,139,250,0.9)',
+                                    backgroundColor: 'rgba(167,139,250,0.1)',
+                                    borderWidth: 3,
+                                    pointRadius: 0,
+                                    tension: 0.4,
+                                    shadowColor: '#a78bfa',
+                                    shadowBlur: 16,
+                                    fill: false,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { labels: { color: '#fff', font: { weight: 'bold' } } },
+                                title: { display: true, text: 'Pressure Trend (Bar)', color: '#fff', font: { size: 18, weight: 'bold' } }
+                            },
+                            scales: {
+                                x: { ticks: { color: '#aaa' }, grid: { color: 'rgba(80,90,120,0.18)' } },
+                                y: { min: 0, max: 10, ticks: { color: '#fff' }, grid: { color: 'rgba(80,90,120,0.18)' } }
+                            }
+                        }
+                    });
+                }
+                if (!speedBarChart) {
+                    const ctx2 = document.getElementById('speedBarChart').getContext('2d');
+                    speedBarChart = new Chart(ctx2, {
+                        type: 'bar',
+                        data: {
+                            labels: [],
+                            datasets: [
+                                {
+                                    label: 'Pump 1 Speed',
+                                    data: [],
+                                    backgroundColor: 'linear-gradient(90deg, #10b981 0%, #3b82f6 100%)',
+                                    borderColor: '#10b981',
+                                    borderWidth: 2,
+                                },
+                                {
+                                    label: 'Pump 2 Speed',
+                                    data: [],
+                                    backgroundColor: 'linear-gradient(90deg, #a78bfa 0%, #3b82f6 100%)',
+                                    borderColor: '#a78bfa',
+                                    borderWidth: 2,
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { labels: { color: '#fff', font: { weight: 'bold' } } },
+                                title: { display: true, text: 'Pump Speed (Hz)', color: '#fff', font: { size: 18, weight: 'bold' } }
+                            },
+                            scales: {
+                                x: { ticks: { color: '#aaa' }, grid: { color: 'rgba(80,90,120,0.18)' } },
+                                y: { min: 0, max: 50, ticks: { color: '#fff' }, grid: { color: 'rgba(80,90,120,0.18)' } }
+                            }
+                        }
+                    });
+                }
+            }
             if (window.innerWidth <= 1024) toggleSidebar();
         }
         function toggleSidebar() {
