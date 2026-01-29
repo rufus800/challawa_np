@@ -3,35 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Challawa Pump Dashboard</title>
+    <title>CHALLAWA COLD PUMP NEW PANEL DASHBOARD</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
     <style>
         :root {
             --primary: #10b981;
             --primary-dark: #059669;
-            --primary-light: rgba(16, 185, 129, 0.1);
-            --background: #ffffff;
-            --foreground: #000000;
-            --muted: #f5f5f5;
-            --muted-foreground: rgba(0, 0, 0, 0.4);
-            --border: rgba(0, 0, 0, 0.1);
+            --primary-light: rgba(16, 185, 129, 0.12);
+            --background: #101624;
+            --background-glass: rgba(24, 28, 40, 0.7);
+            --background-glass-strong: rgba(24, 28, 40, 0.92);
+            --foreground: #e6eaf3;
+            --muted: #181c28;
+            --muted-foreground: rgba(230, 234, 243, 0.5);
+            --border: rgba(80, 90, 120, 0.18);
             --accent: #f43f5e;
-            --secondary: #8b5cf6;
+            --secondary: #6ee7f7;
+            --secondary-dark: #3b82f6;
+            --purple: #a78bfa;
             --warning: #f59e0b;
             --success: #10b981;
             --error: #ef4444;
             --sidebar-width: 256px;
             --sidebar-collapsed: 72px;
             --header-height: 64px;
+            --glass-blur: blur(18px);
+            --glass-shadow: 0 8px 32px 0 rgba(16, 24, 40, 0.45);
+            --neon-green: 0 0 12px 2px #10b98199;
+            --neon-yellow: 0 0 12px 2px #f59e0b99;
+            --neon-red: 0 0 16px 2px #ef444499;
+            --neon-cyan: 0 0 16px 2px #6ee7f7cc;
+            --neon-purple: 0 0 16px 2px #a78bfa99;
         }
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --background: #18181b;
-                --foreground: #fafafa;
-                --muted: #27272a;
-                --muted-foreground: rgba(255, 255, 255, 0.4);
-                --border: rgba(255, 255, 255, 0.1);
-            }
+        body {
+            background: linear-gradient(135deg, #101624 0%, #181c28 100%) fixed;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: 0;
+            background: radial-gradient(ellipse at 20% 10%, #232b3e 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 80%, #1e2233 0%, transparent 70%),
+                        linear-gradient(120deg, #232b3e44 0%, #181c28 100%);
+            pointer-events: none;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         * { transition: color 200ms ease, background-color 300ms ease, border-color 200ms ease, transform 200ms ease; }
@@ -148,7 +166,15 @@
         .sidebar.collapsed .collapse-btn-icon { transform: rotate(180deg); }
         
         /* Main Content */
-        .dashboard-main { flex: 1; margin-left: var(--sidebar-width); min-height: 100vh; transition: margin-left 300ms ease; }
+        .dashboard-main {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            transition: margin-left 300ms ease;
+            background: none;
+            position: relative;
+            z-index: 1;
+        }
         .sidebar.collapsed ~ .dashboard-main { margin-left: var(--sidebar-collapsed); }
         .dashboard-header {
             height: var(--header-height);
@@ -157,10 +183,12 @@
             align-items: center;
             justify-content: space-between;
             border-bottom: 1px solid var(--border);
-            background: var(--background);
+            background: var(--background-glass-strong);
             position: sticky;
             top: 0;
             z-index: 50;
+            backdrop-filter: var(--glass-blur);
+            box-shadow: var(--glass-shadow);
         }
         .breadcrumb {
             font-size: 10px;
@@ -256,49 +284,7 @@
             margin-bottom: 32px;
         }
         
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1px;
-            background: var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 32px;
-        }
-        .stat-card { background: var(--background); padding: 32px; }
-        .stat-card:hover { background: var(--muted); }
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--primary-light);
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 16px;
-            font-size: 18px;
-        }
-        .stat-icon.warning { background: rgba(245, 158, 11, 0.1); }
-        .stat-icon.secondary { background: rgba(139, 92, 246, 0.1); }
-        .stat-label {
-            font-size: 10px;
-            font-weight: 500;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--muted-foreground);
-            margin-bottom: 8px;
-        }
-        .stat-value {
-            font-size: 32px;
-            font-weight: 100;
-            letter-spacing: -0.02em;
-            line-height: 1;
-            margin-bottom: 8px;
-        }
-        .stat-change { font-size: 12px; font-weight: 500; }
-        .stat-change.positive { color: var(--success); }
-        .stat-change.negative { color: var(--error); }
+
         
         /* Pumps Grid */
         .pumps-grid {
@@ -310,7 +296,15 @@
             overflow: hidden;
             margin-bottom: 32px;
         }
-        .pump-card { background: var(--background); padding: 32px; }
+        .pump-card {
+            background: var(--background-glass);
+            padding: 32px;
+            border-radius: 18px;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: var(--glass-blur);
+            border: 1.5px solid var(--border);
+            position: relative;
+        }
         .pump-card-header {
             display: flex;
             justify-content: space-between;
@@ -360,15 +354,20 @@
             grid-template-columns: repeat(3, 1fr);
             gap: 1px;
             background: var(--border);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             margin-bottom: 24px;
+            box-shadow: 0 2px 12px 0 #0ff2 0 1px 8px 0 #a78bfa22;
         }
         .metric-card { background: var(--background); padding: 24px; text-align: center; }
         .metric-card:hover { background: var(--muted); }
-        .metric-card.highlight { background: var(--foreground); color: var(--background); }
+        .metric-card.highlight {
+            background: linear-gradient(135deg, #232b3e 60%, #181c28 100%);
+            color: var(--secondary);
+            box-shadow: 0 0 16px 0 #6ee7f744, 0 0 8px 0 #a78bfa33;
+        }
         .metric-card.highlight .metric-label,
-        .metric-card.highlight .metric-unit { color: rgba(255, 255, 255, 0.6); }
+        .metric-card.highlight .metric-unit { color: #6ee7f7cc; }
         .metric-label {
             font-size: 10px;
             font-weight: 500;
@@ -419,14 +418,42 @@
             border-radius: 8px;
             border: 1px solid transparent;
         }
-        .status-item.active.ready { background: rgba(245, 158, 11, 0.1); border-color: var(--warning); }
-        .status-item.active.running { background: rgba(16, 185, 129, 0.1); border-color: var(--success); }
-        .status-item.active.trip { background: rgba(239, 68, 68, 0.1); border-color: var(--error); }
-        .status-dot { width: 8px; height: 8px; border-radius: 9999px; background: var(--muted-foreground); }
+        .status-item.active.ready {
+            background: rgba(245, 158, 11, 0.13);
+            border-color: var(--warning);
+            box-shadow: 0 0 16px 0 #f59e0b33;
+        }
+        .status-item.active.running {
+            background: rgba(16, 185, 129, 0.13);
+            border-color: var(--success);
+            box-shadow: 0 0 16px 0 #10b98133;
+        }
+        .status-item.active.trip {
+            background: rgba(239, 68, 68, 0.13);
+            border-color: var(--error);
+            box-shadow: 0 0 24px 0 #ef444433;
+        }
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 9999px;
+            background: var(--muted-foreground);
+            box-shadow: 0 0 0 0 transparent;
+        }
         .status-item.active .status-dot { animation: pulse 2s infinite; }
-        .status-item.active.ready .status-dot { background: var(--warning); box-shadow: 0 0 10px var(--warning); }
-        .status-item.active.running .status-dot { background: var(--success); box-shadow: 0 0 10px var(--success); }
-        .status-item.active.trip .status-dot { background: var(--error); box-shadow: 0 0 10px var(--error); animation: blink 0.5s infinite; }
+        .status-item.active.ready .status-dot {
+            background: var(--warning);
+            box-shadow: var(--neon-yellow);
+        }
+        .status-item.active.running .status-dot {
+            background: var(--success);
+            box-shadow: var(--neon-green);
+        }
+        .status-item.active.trip .status-dot {
+            background: var(--error);
+            box-shadow: var(--neon-red);
+            animation: blink 0.5s infinite;
+        }
         .status-label {
             font-size: 10px;
             font-weight: 500;
@@ -447,7 +474,13 @@
             border: 1px solid var(--border);
             margin-bottom: 32px;
         }
-        .alert-card.error { background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2); }
+        .alert-card.error {
+            background: linear-gradient(90deg, #2d1a1a 0%, #181c28 100%);
+            border-color: #ef4444cc;
+            box-shadow: 0 0 32px 0 #ef444488, 0 0 8px 0 #ef4444cc;
+            color: #fff;
+            animation: blink 1s infinite;
+        }
         .alert-icon {
             width: 48px;
             height: 48px;
@@ -586,10 +619,12 @@
         
         /* Table */
         .table-container {
-            background: var(--background);
-            border: 1px solid var(--border);
-            border-radius: 12px;
+            background: var(--background-glass);
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
             overflow: hidden;
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: var(--glass-blur);
         }
         .table-header {
             padding: 24px;
@@ -764,7 +799,7 @@
             </header>
             <div class="dashboard-content">
                 <div class="view active" id="dashboardView">
-                    <h1 class="page-title">Pump Station <span class="text-primary">Overview</span></h1>
+                    <h1 class="page-title">CHALLAWA COLD PUMP NEW PANEL DASHBOARD</h1>
                     <p class="page-subtitle">Real-time monitoring of LINE 7 pump systems</p>
                     <div class="alert-card error" id="alarmAlert" style="display: none;">
                         <div class="alert-icon">⚠️</div>
@@ -773,37 +808,11 @@
                             <p class="alert-text">An alarm condition has been detected.</p>
                         </div>
                     </div>
-                    <div class="stats-grid animate-in">
-                        <div class="stat-card">
-                            <div class="stat-icon">💧</div>
-                            <p class="stat-label">TOTAL PUMPS</p>
-                            <p class="stat-value">2</p>
-                            <p class="stat-change positive">Active</p>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon secondary">📈</div>
-                            <p class="stat-label">AVG PRESSURE</p>
-                            <p class="stat-value" id="avgPressure">0.00</p>
-                            <p class="stat-change">Bar</p>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon warning">⚡</div>
-                            <p class="stat-label">AVG SPEED</p>
-                            <p class="stat-value" id="avgSpeed">0.0</p>
-                            <p class="stat-change">Hz</p>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-icon">✓</div>
-                            <p class="stat-label">SYSTEM STATUS</p>
-                            <p class="stat-value" id="systemStatus">--</p>
-                            <p class="stat-change" id="systemStatusSub">Checking...</p>
-                        </div>
-                    </div>
-                    <div class="pumps-grid animate-in">
-                        <div class="pump-card">
+                    <!-- Stats grid removed for mobile-friendly minimalism; only alarm remains -->
+                    <div class="pumps-grid animate-in" style="display: flex; flex-wrap: wrap; gap: 24px;">
+                        <div class="pump-card" style="flex: 1 1 340px; min-width: 290px; max-width: 600px; display: flex; flex-direction: column; justify-content: flex-start;">
                             <div class="pump-card-header">
                                 <div class="pump-info">
-                                    <div class="pump-icon">💧</div>
                                     <div>
                                         <p class="pump-name">PUMP 1</p>
                                         <p class="pump-title">LINE 7 MIXER</p>
@@ -811,86 +820,121 @@
                                 </div>
                                 <span class="badge badge-muted" id="p1StatusBadge">UNKNOWN</span>
                             </div>
-                            <div class="metrics-grid">
-                                <div class="metric-card">
-                                    <p class="metric-label">PRESSURE</p>
-                                    <div class="metric-value-row">
-                                        <span class="metric-value" id="p1Pressure">0.00</span>
-                                        <span class="metric-unit">Bar</span>
-                                    </div>
-                                    <div class="progress-container">
-                                        <div class="progress-bar"><div class="progress-fill primary" id="p1PressureBar" style="width: 0%"></div></div>
-                                        <div class="progress-labels"><span>0</span><span>10</span></div>
-                                    </div>
+                            <div class="gauges-row" style="display: flex; flex-direction: row; gap: 24px; justify-content: center; align-items: flex-end; margin-bottom: 16px; flex-wrap: wrap; width: 100%;">
+                                <div class="gauge-card">
+                                    <svg width="120" height="120" viewBox="0 0 120 120" class="donut-gauge">
+                                        <circle cx="60" cy="60" r="50" stroke="#233bff22" stroke-width="16" fill="none"/>
+                                        <text x="20" y="65" font-size="10" fill="#6ee7f7aa">0</text>
+                                        <text x="100" y="65" font-size="10" fill="#6ee7f7aa">10</text>
+                                        <circle id="p1PressureSetpointArc" cx="60" cy="60" r="50" stroke="#06b6d4" stroke-width="6" fill="none" stroke-dasharray="314" stroke-dashoffset="314" opacity="0.7"/>
+                                        <circle id="p1PressureGauge" cx="60" cy="60" r="50" stroke="#3b82f6" stroke-width="16" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" filter="url(#glowBlue)"/>
+                                        <defs>
+                                            <filter id="glowBlue" x="-40%" y="-40%" width="180%" height="180%">
+                                                <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#3b82f6" flood-opacity="0.7"/>
+                                            </filter>
+                                        </defs>
+                                        <text x="60" y="68" text-anchor="middle" font-size="34" fill="#3b82f6" font-weight="bold" id="p1PressureText" style="filter: drop-shadow(0 0 8px #3b82f6cc);">0.00</text>
+                                        <text x="60" y="92" text-anchor="middle" font-size="14" fill="#6ee7f7">Bar</text>
+                                        <g class="gauge-info">
+                                            <circle cx="105" cy="20" r="8" fill="#232b3e"/>
+                                            <text x="105" y="25" text-anchor="middle" font-size="13" fill="#6ee7f7" font-weight="bold">i</text>
+                                        </g>
+                                    </svg>
                                 </div>
-                                <div class="metric-card highlight">
-                                    <p class="metric-label">SET POINT</p>
-                                    <div class="metric-value-row">
-                                        <span class="metric-value" id="p1Setpoint">0.00</span>
-                                        <span class="metric-unit">Bar</span>
-                                    </div>
-                                </div>
-                                <div class="metric-card">
-                                    <p class="metric-label">SPEED</p>
-                                    <div class="metric-value-row">
-                                        <span class="metric-value" id="p1Speed">0.0</span>
-                                        <span class="metric-unit">Hz</span>
-                                    </div>
-                                    <div class="progress-container">
-                                        <div class="progress-bar"><div class="progress-fill secondary" id="p1SpeedBar" style="width: 0%"></div></div>
-                                        <div class="progress-labels"><span>0</span><span>50</span></div>
-                                    </div>
+                                <div class="gauge-card">
+                                    <svg width="120" height="120" viewBox="0 0 120 120" class="donut-gauge">
+                                        <circle cx="60" cy="60" r="50" stroke="#233bff22" stroke-width="16" fill="none"/>
+                                        <text x="20" y="65" font-size="10" fill="#10b981aa">0</text>
+                                        <text x="100" y="65" font-size="10" fill="#10b981aa">50</text>
+                                        <circle id="p1SpeedSetpointArc" cx="60" cy="60" r="50" stroke="#a78bfa" stroke-width="6" fill="none" stroke-dasharray="314" stroke-dashoffset="314" opacity="0.7"/>
+                                        <circle id="p1SpeedGauge" cx="60" cy="60" r="50" stroke="#10b981" stroke-width="16" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" filter="url(#glowGreen)"/>
+                                        <defs>
+                                            <filter id="glowGreen" x="-40%" y="-40%" width="180%" height="180%">
+                                                <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#10b981" flood-opacity="0.7"/>
+                                            </filter>
+                                        </defs>
+                                        <text x="60" y="68" text-anchor="middle" font-size="34" fill="#10b981" font-weight="bold" id="p1SpeedText" style="filter: drop-shadow(0 0 8px #10b981cc);">0.0</text>
+                                        <text x="60" y="92" text-anchor="middle" font-size="14" fill="#10b981cc">Hz</text>
+                                        <g class="gauge-info">
+                                            <circle cx="105" cy="20" r="8" fill="#232b3e"/>
+                                            <text x="105" y="25" text-anchor="middle" font-size="13" fill="#10b981" font-weight="bold">i</text>
+                                        </g>
+                                    </svg>
                                 </div>
                             </div>
-                            <div class="status-row">
+                            <div style="width: 100%; display: flex; justify-content: center; margin-top: 12px;">
+                                <div class="setpoint-box setpoint-gradient" style="box-shadow: 0 0 12px 0 #3b82f655, 0 2px 8px 0 #10b98133; border-radius: 12px; padding: 10px 24px; font-size: 18px; font-weight: 500; background: rgba(24,28,40,0.85); color: #fff; display: flex; align-items: center; gap: 8px;">
+                                    <span style="vertical-align: middle; margin-right: 6px; font-size: 20px;">🎯</span>
+                                    Setpoint: <span id="p1Setpoint">0.00</span> Bar
+                                </div>
+                            </div>
+                            <div class="status-row" style="margin-top: 32px;">
                                 <div class="status-item ready" id="p1ReadyBox"><div class="status-dot"></div><span class="status-label">Ready</span></div>
                                 <div class="status-item running" id="p1RunningBox"><div class="status-dot"></div><span class="status-label">Running</span></div>
                                 <div class="status-item trip" id="p1TripBox"><div class="status-dot"></div><span class="status-label">Trip</span></div>
                             </div>
                         </div>
-                        <div class="pump-card">
+                        <div class="pump-card" style="flex: 1 1 340px; min-width: 290px; max-width: 600px;">
                             <div class="pump-card-header">
                                 <div class="pump-info">
-                                    <div class="pump-icon">💧</div>
                                     <div>
                                         <p class="pump-name">PUMP 2</p>
-                                        <p class="pump-title">LINE 7 AHU/SYRUP</p>
+                                        <p class="pump-title">LINE 7 AHU/SYRUP ROOM</p>
                                     </div>
                                 </div>
                                 <span class="badge badge-muted" id="p2StatusBadge">UNKNOWN</span>
                             </div>
-                            <div class="metrics-grid">
-                                <div class="metric-card">
-                                    <p class="metric-label">PRESSURE</p>
-                                    <div class="metric-value-row">
-                                        <span class="metric-value" id="p2Pressure">0.00</span>
-                                        <span class="metric-unit">Bar</span>
+                            <div class="gauges-row" style="display: flex; flex-direction: row; gap: 24px; justify-content: center; align-items: flex-end; margin-bottom: 16px; flex-wrap: wrap;">
+                                <div style="display: flex; flex-direction: row; gap: 24px; justify-content: center; align-items: flex-end; flex-wrap: wrap; width: 100%;">
+                                    <div class="gauge-card">
+                                        <svg width="120" height="120" viewBox="0 0 120 120" class="donut-gauge">
+                                            <circle cx="60" cy="60" r="50" stroke="#233bff22" stroke-width="16" fill="none"/>
+                                            <text x="20" y="65" font-size="10" fill="#6ee7f7aa">0</text>
+                                            <text x="100" y="65" font-size="10" fill="#6ee7f7aa">10</text>
+                                            <circle id="p2PressureSetpointArc" cx="60" cy="60" r="50" stroke="#06b6d4" stroke-width="6" fill="none" stroke-dasharray="314" stroke-dashoffset="314" opacity="0.7"/>
+                                            <circle id="p2PressureGauge" cx="60" cy="60" r="50" stroke="#3b82f6" stroke-width="16" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" filter="url(#glowBlue2)"/>
+                                            <defs>
+                                                <filter id="glowBlue2" x="-40%" y="-40%" width="180%" height="180%">
+                                                    <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#3b82f6" flood-opacity="0.7"/>
+                                                </filter>
+                                            </defs>
+                                            <text x="60" y="68" text-anchor="middle" font-size="34" fill="#3b82f6" font-weight="bold" id="p2PressureText" style="filter: drop-shadow(0 0 8px #3b82f6cc);">0.00</text>
+                                            <text x="60" y="92" text-anchor="middle" font-size="14" fill="#6ee7f7">Bar</text>
+                                            <g class="gauge-info">
+                                                <circle cx="105" cy="20" r="8" fill="#232b3e"/>
+                                                <text x="105" y="25" text-anchor="middle" font-size="13" fill="#6ee7f7" font-weight="bold">i</text>
+                                            </g>
+                                        </svg>
                                     </div>
-                                    <div class="progress-container">
-                                        <div class="progress-bar"><div class="progress-fill primary" id="p2PressureBar" style="width: 0%"></div></div>
-                                        <div class="progress-labels"><span>0</span><span>10</span></div>
+                                    <div class="gauge-card">
+                                        <svg width="120" height="120" viewBox="0 0 120 120" class="donut-gauge">
+                                            <circle cx="60" cy="60" r="50" stroke="#233bff22" stroke-width="16" fill="none"/>
+                                            <text x="20" y="65" font-size="10" fill="#10b981aa">0</text>
+                                            <text x="100" y="65" font-size="10" fill="#10b981aa">50</text>
+                                            <circle id="p2SpeedSetpointArc" cx="60" cy="60" r="50" stroke="#a78bfa" stroke-width="6" fill="none" stroke-dasharray="314" stroke-dashoffset="314" opacity="0.7"/>
+                                            <circle id="p2SpeedGauge" cx="60" cy="60" r="50" stroke="#10b981" stroke-width="16" fill="none" stroke-linecap="round" stroke-dasharray="314" stroke-dashoffset="314" filter="url(#glowGreen2)"/>
+                                            <defs>
+                                                <filter id="glowGreen2" x="-40%" y="-40%" width="180%" height="180%">
+                                                    <feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#10b981" flood-opacity="0.7"/>
+                                                </filter>
+                                            </defs>
+                                            <text x="60" y="68" text-anchor="middle" font-size="34" fill="#10b981" font-weight="bold" id="p2SpeedText" style="filter: drop-shadow(0 0 8px #10b981cc);">0.0</text>
+                                            <text x="60" y="92" text-anchor="middle" font-size="14" fill="#10b981cc">Hz</text>
+                                            <g class="gauge-info">
+                                                <circle cx="105" cy="20" r="8" fill="#232b3e"/>
+                                                <text x="105" y="25" text-anchor="middle" font-size="13" fill="#10b981" font-weight="bold">i</text>
+                                            </g>
+                                        </svg>
                                     </div>
                                 </div>
-                                <div class="metric-card highlight">
-                                    <p class="metric-label">SET POINT</p>
-                                    <div class="metric-value-row">
-                                        <span class="metric-value" id="p2Setpoint">0.00</span>
-                                        <span class="metric-unit">Bar</span>
-                                    </div>
-                                </div>
-                                <div class="metric-card">
-                                    <p class="metric-label">SPEED</p>
-                                    <div class="metric-value-row">
-                                        <span class="metric-value" id="p2Speed">0.0</span>
-                                        <span class="metric-unit">Hz</span>
-                                    </div>
-                                    <div class="progress-container">
-                                        <div class="progress-bar"><div class="progress-fill secondary" id="p2SpeedBar" style="width: 0%"></div></div>
-                                        <div class="progress-labels"><span>0</span><span>50</span></div>
+                                <div style="width: 100%; display: flex; justify-content: center; margin-top: 12px;">
+                                    <div class="setpoint-box setpoint-gradient" style="box-shadow: 0 0 12px 0 #3b82f655, 0 2px 8px 0 #10b98133; border-radius: 12px; padding: 10px 24px; font-size: 18px; font-weight: 500; background: rgba(24,28,40,0.85); color: #fff; display: flex; align-items: center; gap: 8px;">
+                                        <span style="vertical-align: middle; margin-right: 6px; font-size: 20px;">🎯</span>
+                                        Setpoint: <span id="p2Setpoint">0.00</span> Bar
                                     </div>
                                 </div>
                             </div>
-                            <div class="status-row">
+                            <div class="status-row" style="margin-top: 32px;">
                                 <div class="status-item ready" id="p2ReadyBox"><div class="status-dot"></div><span class="status-label">Ready</span></div>
                                 <div class="status-item running" id="p2RunningBox"><div class="status-dot"></div><span class="status-label">Running</span></div>
                                 <div class="status-item trip" id="p2TripBox"><div class="status-dot"></div><span class="status-label">Trip</span></div>
@@ -958,13 +1002,47 @@
         function updateTimestamp() { document.getElementById('timestamp').textContent = new Date().toLocaleTimeString('en-US', { hour12: false }); }
         setInterval(updateTimestamp, 1000); updateTimestamp();
         function updateProgressBar(id, val, max) { const bar = document.getElementById(id); if (bar) bar.style.width = Math.min(Math.max((val/max)*100,0),100) + '%'; }
+        function animateGauge(id, to) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const from = parseFloat(el.getAttribute('data-last') || el.getAttribute('stroke-dashoffset') || 314);
+            const start = performance.now();
+            const duration = 400;
+            function frame(now) {
+                const t = Math.min(1, (now - start) / duration);
+                const val = from + (to - from) * t;
+                el.setAttribute('stroke-dashoffset', val);
+                el.setAttribute('data-last', val);
+                if (t < 1) requestAnimationFrame(frame);
+                else el.setAttribute('data-last', to);
+            }
+            requestAnimationFrame(frame);
+        }
         function updatePump(n, d) {
             const p = 'p' + n;
-            document.getElementById(p + 'Pressure').textContent = d.pressure.toFixed(2);
-            updateProgressBar(p + 'PressureBar', d.pressure, 10);
-            document.getElementById(p + 'Setpoint').textContent = d.pressure_setpoint.toFixed(2);
-            document.getElementById(p + 'Speed').textContent = d.speed.toFixed(1);
-            updateProgressBar(p + 'SpeedBar', d.speed, 50);
+            // Pressure Gauge
+            const pressure = Math.max(0, Math.min(d.pressure, 10));
+            const pressurePercent = pressure / 10;
+            const pressureOffset = 314 - (314 * pressurePercent);
+            animateGauge(p + 'PressureGauge', pressureOffset);
+            document.getElementById(p + 'PressureText').textContent = d.pressure.toFixed(2);
+            // Setpoint Arc
+            const setpoint = Math.max(0, Math.min(d.pressure_setpoint, 10));
+            const setpointPercent = setpoint / 10;
+            const setpointOffset = 314 - (314 * setpointPercent);
+            document.getElementById(p + 'PressureSetpointArc').setAttribute('stroke-dashoffset', setpointOffset);
+            // Setpoint display (fix: use correct element for each pump)
+            const setpointElem = document.getElementById(p + 'Setpoint');
+            if (setpointElem) setpointElem.textContent = d.pressure_setpoint.toFixed(2);
+            // Speed Gauge
+            const speed = Math.max(0, Math.min(d.speed, 50));
+            const speedPercent = speed / 50;
+            const speedOffset = 314 - (314 * speedPercent);
+            animateGauge(p + 'SpeedGauge', speedOffset);
+            document.getElementById(p + 'SpeedText').textContent = d.speed.toFixed(1);
+            // Speed Setpoint Arc (optional, here just for visual symmetry)
+            document.getElementById(p + 'SpeedSetpointArc').setAttribute('stroke-dashoffset', 314); // No setpoint for speed
+            // Status badge and lights
             const badge = document.getElementById(p + 'StatusBadge');
             badge.textContent = d.status;
             badge.className = 'badge badge-' + (d.status.toLowerCase() === 'running' ? 'success' : d.status.toLowerCase() === 'ready' ? 'warning' : d.status.toLowerCase() === 'trip' ? 'error' : 'muted');
@@ -979,13 +1057,7 @@
             alarmBtn.style.display = data.alarm ? 'flex' : 'none';
             alarmAlert.style.display = data.alarm ? 'flex' : 'none';
             updatePump(1, data.pump1); updatePump(2, data.pump2);
-            document.getElementById('avgPressure').textContent = ((data.pump1.pressure + data.pump2.pressure) / 2).toFixed(2);
-            document.getElementById('avgSpeed').textContent = ((data.pump1.speed + data.pump2.speed) / 2).toFixed(1);
-            const ss = document.getElementById('systemStatus'), sss = document.getElementById('systemStatusSub');
-            if (!data.connected) { ss.textContent = 'OFFLINE'; sss.textContent = 'No PLC connection'; sss.className = 'stat-change negative'; }
-            else if (data.pump1.trip || data.pump2.trip) { ss.textContent = 'FAULT'; sss.textContent = 'Trip detected'; sss.className = 'stat-change negative'; }
-            else if (data.pump1.running || data.pump2.running) { ss.textContent = 'ACTIVE'; sss.textContent = 'System running'; sss.className = 'stat-change positive'; }
-            else { ss.textContent = 'IDLE'; sss.textContent = 'System ready'; sss.className = 'stat-change'; }
+
         }
         fetch('/api/status').then(r => r.json()).then(updateStatus).catch(e => console.error(e));
         function showView(view, event) {
