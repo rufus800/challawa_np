@@ -271,10 +271,10 @@
         }
         
         /* Dashboard Content */
-        .dashboard-content { padding: 32px; }
+        .dashboard-content { padding: 12px; }
         .page-title {
-            font-size: 32px;
-            font-weight: 100;
+            font-size: 28px;
+            font-weight: bold;
             letter-spacing: -0.02em;
             margin-bottom: 4px;
         }
@@ -290,27 +290,28 @@
         .pumps-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1px;
+            gap: 8px;
             background: var(--border);
-            border-radius: 12px;
+            border-radius: 10px;
             overflow: hidden;
-            margin-bottom: 32px;
+            margin-bottom: 16px;
         }
         .pump-card {
             background: var(--background-glass);
-            padding: 32px;
-            border-radius: 18px;
+            padding: 16px 10px;
+            border-radius: 12px;
             box-shadow: var(--glass-shadow);
             backdrop-filter: var(--glass-blur);
             border: 2.5px solid #10b981; /* Green border for pop effect */
             position: relative;
             transition: border-color 0.3s;
+            min-width: 0;
         }
         .pump-card-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 24px;
+            margin-bottom: 10px;
         }
         .pump-info { display: flex; align-items: center; gap: 16px; }
         .pump-icon {
@@ -408,7 +409,7 @@
         }
         
         /* Status Row */
-        .status-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .status-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
         .status-item {
             display: flex;
             align-items: center;
