@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CHALLAWA COLD PUMP NEW PANEL DASHBOARD</title>
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.7.0/jspdf.plugin.autotable.min.js"></script>
     <style>
         :root {
             --primary: #10b981;
@@ -717,14 +719,19 @@
             .dashboard-header { padding: 0 8px; }
             .stats-grid { grid-template-columns: 1fr; }
             .metrics-grid { grid-template-columns: 1fr; }
-            .status-row { grid-template-columns: repeat(3, 1fr); }
+            /* Keep .status-row horizontal on mobile */
+            .status-row { grid-template-columns: repeat(3, 1fr) !important; }
             .health-grid { grid-template-columns: 1fr; }
             .filters-bar { flex-direction: column; align-items: stretch; padding: 8px; gap: 6px; }
             .filter-group { width: 100%; }
             .filter-group input, .filter-group select { width: 100%; }
             .filter-actions { margin-left: 0; flex-direction: column; gap: 6px; }
             .btn { width: 100%; }
-            .glass-widget-row { flex-direction: column; gap: 8px !important; }
+            /* ReportsView glass widgets row: force row direction and side by side */
+            .reports-glass-row { display: flex !important; flex-direction: row !important; gap: 8px !important; flex-wrap: nowrap !important; }
+            .reports-glass-row .glass-widget { min-width: 0 !important; flex: 1 1 0 !important; }
+            /* Make charts full width on mobile */
+            .reports-chart { width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; margin-left: 0 !important; margin-right: 0 !important; }
             .page-title { font-size: 20px; }
             .section-title { font-size: 20px; }
             .metric-value { font-size: 20px; }
@@ -754,7 +761,6 @@
             .health-card { padding: 16px; }
             .health-card-header { flex-direction: column; gap: 12px; align-items: flex-start; }
             .health-score { align-self: flex-start; }
-            .status-row { grid-template-columns: repeat(3, 1fr); }
             .data-table th:nth-child(4), .data-table td:nth-child(4) { display: none; }
         }
     </style>
@@ -974,24 +980,24 @@
                         </div>
                     </div>
                     <!-- Glassmorphism widgets -->
-                    <div style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: wrap;">
-                        <div class="glass-widget" style="flex:1; min-width:220px; background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center;">
+                    <div class="reports-glass-row" style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: nowrap;">
+                        <div class="glass-widget" style="flex:1; min-width:120px; background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center;">
                             <div style="font-size:16px; color:#6ee7f7; margin-bottom:8px;">Current Pressure</div>
                             <div id="currentPressure" style="font-size:40px; font-weight:bold; color:#fff; text-shadow:0 0 16px #6ee7f7cc;">--</div>
                             <div style="font-size:18px; color:#6ee7f7;">Bar</div>
                         </div>
-                        <div class="glass-widget" style="flex:1; min-width:220px; background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center;">
+                        <div class="glass-widget" style="flex:1; min-width:120px; background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center;">
                             <div style="font-size:16px; color:#a78bfa; margin-bottom:8px;">Current Frequency</div>
                             <div id="currentFrequency" style="font-size:40px; font-weight:bold; color:#fff; text-shadow:0 0 16px #a78bfa99;">--</div>
                             <div style="font-size:18px; color:#a78bfa;">Hz</div>
                         </div>
                     </div>
                     <!-- Central Trend Line Chart -->
-                    <div style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:24px;">
+                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:24px; width:100%; min-width:0; box-sizing:border-box;">
                         <canvas id="pressureTrendChart" height="120"></canvas>
                     </div>
                     <!-- Vertical Bar Chart for Speed -->
-                    <div style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:24px;">
+                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:24px; width:100%; min-width:0; box-sizing:border-box;">
                         <canvas id="speedBarChart" height="120"></canvas>
                     </div>
                     <div class="health-grid animate-in" id="healthGrid"></div>
@@ -1248,13 +1254,59 @@
                 tbody.innerHTML = events.map(e => '<tr><td>' + e.timestamp + '</td><td><div class="table-cell-flex"><div class="table-avatar">💧</div><span>' + e.pump_name + '</span></div></td><td><span class="badge badge-error">' + e.event_type + '</span></td><td>' + e.pressure.toFixed(2) + ' Bar</td><td>' + e.speed.toFixed(1) + ' Hz</td><td>' + e.description + '</td></tr>').join('');
             });
         }
-        function downloadReport() {
-            const sd = document.getElementById('startDate').value, ed = document.getElementById('endDate').value, pid = document.getElementById('pumpFilter').value;
-            let url = '/api/reports/download?';
-            if (sd) url += 'start_date=' + sd + '&';
-            if (ed) url += 'end_date=' + ed + '&';
-            if (pid) url += 'pump_id=' + pid + '&';
-            window.open(url, '_blank');
+        async function downloadReport() {
+            const btn = document.querySelector('.btn.btn-success');
+            if (btn) btn.disabled = true;
+            try {
+                const sd = document.getElementById('startDate').value, ed = document.getElementById('endDate').value, pid = document.getElementById('pumpFilter').value;
+                let url = '/api/reports/events?';
+                if (sd) url += 'start_date=' + sd + '&';
+                if (ed) url += 'end_date=' + ed + '&';
+                if (pid) url += 'pump_id=' + pid + '&';
+                const eventsResp = await fetch(url);
+                if (!eventsResp.ok) throw new Error('Failed to fetch trip events');
+                const events = await eventsResp.json();
+                const healthResp = await fetch('/api/reports/health');
+                if (!healthResp.ok) throw new Error('Failed to fetch pump health');
+                const health = await healthResp.json();
+                if (!window.jspdf || !window.jspdf.jsPDF) throw new Error('jsPDF not loaded');
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                doc.setFontSize(18);
+                doc.text('Challawa Pump Telemetry Report', 14, 16);
+                doc.setFontSize(12);
+                doc.text('Trip Event Log', 14, 28);
+                if (events.length) {
+                    doc.autoTable({
+                        startY: 32,
+                        head: [["Timestamp", "Pump", "Event", "Pressure (Bar)", "Speed (Hz)", "Description"]],
+                        body: events.map(e => [e.timestamp, e.pump_name, e.event_type, e.pressure.toFixed(2), e.speed.toFixed(1), e.description]),
+                        styles: { fontSize: 9 },
+                        headStyles: { fillColor: [16,185,129] },
+                    });
+                } else {
+                    doc.text('No trip events found for the selected period.', 14, 36);
+                }
+                let y = doc.lastAutoTable ? doc.lastAutoTable.finalY + 10 : 50;
+                doc.setFontSize(12);
+                doc.text('Pump Health Summary', 14, y);
+                if (health.length) {
+                    doc.autoTable({
+                        startY: y + 4,
+                        head: [["Pump Name", "Health Score (%)", "Total Trips", "Last Trip"]],
+                        body: health.map(p => [p.pump_name, p.health_score, p.total_trips, p.last_trip ? new Date(p.last_trip).toLocaleDateString() : 'Never']),
+                        styles: { fontSize: 9 },
+                        headStyles: { fillColor: [167,139,250] },
+                    });
+                } else {
+                    doc.text('No pump health data available.', 14, y + 8);
+                }
+                doc.save('challawa_pump_report.pdf');
+            } catch (err) {
+                alert('Failed to generate PDF report. ' + (err && err.message ? err.message : err));
+            } finally {
+                if (btn) btn.disabled = false;
+            }
         }
         const today = new Date(), lastMonth = new Date(); lastMonth.setMonth(lastMonth.getMonth() - 1);
         document.getElementById('endDate').value = today.toISOString().split('T')[0];
