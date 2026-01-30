@@ -964,15 +964,35 @@
                     </div>
                     <!-- Glassmorphism widgets -->
                     <div class="reports-glass-row" style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: nowrap; width: 100%;">
-                        <div class="glass-widget" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center; width:100%; min-width:0; margin-bottom:0;">
-                            <div style="font-size:16px; color:#6ee7f7; margin-bottom:8px;">Current Pressure</div>
-                            <div id="currentPressure" style="font-size:40px; font-weight:bold; color:#fff; text-shadow:0 0 16px #6ee7f7cc;">--</div>
-                            <div style="font-size:18px; color:#6ee7f7;">Bar</div>
+                        <div class="glass-widget" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:flex-start; width:100%; min-width:0; margin-bottom:0; min-height:110px; justify-content:center;">
+                            <div style="font-size:16px; color:#6ee7f7; font-weight:bold; margin-bottom:10px;">Current Pressure</div>
+                            <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <span style="font-size:13px; color:#6ee7f7; font-weight:600; min-width:90px;">L 7 Mixer</span>
+                                    <span id="currentPressureP1" style="font-size:28px; font-weight:bold; color:#fff; text-shadow:0 0 8px #6ee7f7cc; min-width:60px;">--</span>
+                                    <span style="font-size:15px; color:#6ee7f7;">Bar</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <span style="font-size:13px; color:#a78bfa; font-weight:600; min-width:90px;">L 7 AHU/SR</span>
+                                    <span id="currentPressureP2" style="font-size:28px; font-weight:bold; color:#fff; text-shadow:0 0 8px #a78bfa99; min-width:60px;">--</span>
+                                    <span style="font-size:15px; color:#a78bfa;">Bar</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="glass-widget" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center; width:100%; min-width:0; margin-bottom:0;">
-                            <div style="font-size:16px; color:#a78bfa; margin-bottom:8px;">Current Frequency</div>
-                            <div id="currentFrequency" style="font-size:40px; font-weight:bold; color:#fff; text-shadow:0 0 16px #a78bfa99;">--</div>
-                            <div style="font-size:18px; color:#a78bfa;">Hz</div>
+                        <div class="glass-widget" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:flex-start; width:100%; min-width:0; margin-bottom:0; min-height:110px; justify-content:center;">
+                            <div style="font-size:16px; color:#a78bfa; font-weight:bold; margin-bottom:10px;">Current Frequency</div>
+                            <div style="display:flex; flex-direction:column; gap:10px; width:100%;">
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <span style="font-size:13px; color:#a78bfa; font-weight:600; min-width:90px;">L 7 Mixer</span>
+                                    <span id="currentFrequencyP1" style="font-size:28px; font-weight:bold; color:#fff; text-shadow:0 0 8px #a78bfa99; min-width:60px;">--</span>
+                                    <span style="font-size:15px; color:#a78bfa;">Hz</span>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:12px;">
+                                    <span style="font-size:13px; color:#6ee7f7; font-weight:600; min-width:90px;">L 7 AHU/SR</span>
+                                    <span id="currentFrequencyP2" style="font-size:28px; font-weight:bold; color:#fff; text-shadow:0 0 8px #6ee7f7cc; min-width:60px;">--</span>
+                                    <span style="font-size:15px; color:#6ee7f7;">Hz</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- Central Trend Line Chart -->
@@ -1079,8 +1099,10 @@
             updatePump(1, data.pump1); updatePump(2, data.pump2);
 
             // Update glass widgets
-            document.getElementById('currentPressure').textContent = data.pump1.pressure.toFixed(2) + ' / ' + data.pump2.pressure.toFixed(2);
-            document.getElementById('currentFrequency').textContent = data.pump1.speed.toFixed(1) + ' / ' + data.pump2.speed.toFixed(1);
+            document.getElementById('currentPressureP1').textContent = data.pump1.pressure.toFixed(2);
+            document.getElementById('currentPressureP2').textContent = data.pump2.pressure.toFixed(2);
+            document.getElementById('currentFrequencyP1').textContent = data.pump1.speed.toFixed(1);
+            document.getElementById('currentFrequencyP2').textContent = data.pump2.speed.toFixed(1);
 
             // Update trend data (keep last 30 points)
             if (!window.reportsViewActive) return;
