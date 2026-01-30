@@ -527,6 +527,12 @@
         .btn-secondary:hover { background: var(--muted); }
         .btn-success { background: var(--primary); color: white; }
         .btn-success:hover { background: var(--primary-dark); }
+
+        /* Custom bordered nav button for top nav */
+        .nav-btn-bordered {
+            border: 2px solid var(--primary) !important;
+            box-shadow: 0 2px 8px 0 rgba(16,185,129,0.08);
+        }
         
         /* Views */
         .view { display: none; }
@@ -787,8 +793,8 @@
             <div class="dashboard-content">
                 <div class="view active" id="dashboardView">
                     <div class="top-nav-btns" style="display: flex; gap: 12px; margin-bottom: 18px; justify-content: flex-start;">
-                        <button id="dashboardNavBtn" class="btn btn-primary nav-btn active" onclick="showView('dashboard', event)">Dashboard</button>
-                        <button id="reportsNavBtn" class="btn btn-secondary nav-btn" onclick="showView('reports', event)">Reports</button>
+                        <button id="dashboardNavBtn" class="btn btn-primary nav-btn active nav-btn-bordered" onclick="showView('dashboard', event)"><span style="font-weight:bold;">Dashboard</span></button>
+                        <button id="reportsNavBtn" class="btn btn-secondary nav-btn nav-btn-bordered" onclick="showView('reports', event)"><span style="font-weight:bold;">Reports</span></button>
                     </div>
                     <h1 class="page-title">CHALLAWA COLD PUMP NEW PANEL DASHBOARD</h1>
                     <p class="page-subtitle">Real-time monitoring of LINE 7 pump systems</p>
@@ -933,8 +939,8 @@
                 </div>
                 <div class="view" id="reportsView">
                     <div class="top-nav-btns" style="display: flex; gap: 12px; margin-bottom: 18px; justify-content: flex-start;">
-                        <button id="dashboardNavBtn2" class="btn btn-secondary nav-btn" onclick="showView('dashboard', event)">Dashboard</button>
-                        <button id="reportsNavBtn2" class="btn btn-primary nav-btn active" onclick="showView('reports', event)">Reports</button>
+                        <button id="dashboardNavBtn2" class="btn btn-secondary nav-btn nav-btn-bordered" onclick="showView('dashboard', event)"><span style="font-weight:bold;">Dashboard</span></button>
+                        <button id="reportsNavBtn2" class="btn btn-primary nav-btn active nav-btn-bordered" onclick="showView('reports', event)"><span style="font-weight:bold;">Reports</span></button>
                     </div>
                     <div class="section-header">
                         <p class="section-label">ANALYTICS</p>
