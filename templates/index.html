@@ -768,23 +768,7 @@
 </head>
 <body>
     <div class="dashboard-layout">
-        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">C</div>
-                <span class="sidebar-brand">Challawa</span>
-            </div>
-            <nav class="sidebar-nav">
-                <!-- Navigation moved to top of main content -->
-            </nav>
-            <div class="sidebar-footer">
-                <button class="collapse-btn" onclick="toggleCollapse()">
-                    <span class="collapse-btn-icon">◀</span>
-                    <span class="collapse-btn-text">Collapse</span>
-                </button>
-            </div>
-        </aside>
-        <main class="dashboard-main">
+        <main class="dashboard-main" style="margin-left:0;">
             <header class="dashboard-header">
                 <div style="display: flex; align-items: center; gap: 16px;">
                     <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
@@ -1236,19 +1220,7 @@
             }
             if (window.innerWidth <= 1024) toggleSidebar();
         }
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebarOverlay').classList.toggle('active');
-        }
-        function toggleCollapse() {
-            const sidebar = document.getElementById('sidebar');
-            sidebar.classList.toggle('collapsed');
-            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
-        }
-        // Restore sidebar state on load
-        if (localStorage.getItem('sidebarCollapsed') === 'true' && window.innerWidth > 1024) {
-            document.getElementById('sidebar').classList.add('collapsed');
-        }
+        // Sidebar and collapse functions removed
         function loadHealthData() {
             fetch('/api/reports/health').then(r => r.json()).then(data => {
                 document.getElementById('healthGrid').innerHTML = data.map(p => {
