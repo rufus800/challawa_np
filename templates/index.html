@@ -731,7 +731,8 @@
             .reports-glass-row { display: flex !important; flex-direction: column !important; gap: 12px !important; flex-wrap: nowrap !important; width: 100% !important; }
             .reports-glass-row .glass-widget { min-width: 0 !important; width: 100% !important; flex: none !important; }
             /* Make charts full width and stack vertically on mobile */
-            .reports-chart { width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; margin-left: 0 !important; margin-right: 0 !important; margin-bottom: 16px !important; }
+            .reports-chart { width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; margin-left: 0 !important; margin-right: 0 !important; margin-bottom: 16px !important; padding: 4px 0 4px 0 !important; }
+            .reports-chart canvas { width: 100% !important; min-width: 0 !important; max-width: 100vw !important; height: 180px !important; min-height: 120px !important; display: block !important; }
             .page-title { font-size: 20px; }
             .section-title { font-size: 20px; }
             .metric-value { font-size: 20px; }
@@ -993,12 +994,12 @@
                         </div>
                     </div>
                     <!-- Central Trend Line Chart -->
-                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:16px; width:100%; min-width:0; box-sizing:border-box;">
-                        <canvas id="pressureTrendChart" height="120"></canvas>
+                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:12px 4px 12px 4px; margin-bottom:16px; width:100%; min-width:0; box-sizing:border-box; display:flex; flex-direction:column; align-items:center;">
+                        <canvas id="pressureTrendChart" style="width:100% !important; max-width:100vw; height:180px !important; min-height:120px; display:block;"></canvas>
                     </div>
                     <!-- Vertical Bar Chart for Speed -->
-                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:16px; width:100%; min-width:0; box-sizing:border-box;">
-                        <canvas id="speedBarChart" height="120"></canvas>
+                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:12px 4px 12px 4px; margin-bottom:16px; width:100%; min-width:0; box-sizing:border-box; display:flex; flex-direction:column; align-items:center;">
+                        <canvas id="speedBarChart" style="width:100% !important; max-width:100vw; height:180px !important; min-height:120px; display:block;"></canvas>
                     </div>
                     <div class="health-grid animate-in" id="healthGrid"></div>
                     <div class="table-container animate-in">
@@ -1135,8 +1136,11 @@
             if (view === 'reports') {
                 loadHealthData();
                 queryReports();
-                // Initialize charts if not already
-                if (!pressureTrendChart) {
+                // Destroy existing charts if present to avoid canvas sizing bugs
+                if (pressureTrendChart) { pressureTrendChart.destroy(); pressureTrendChart = null; }
+                if (speedBarChart) { speedBarChart.destroy(); speedBarChart = null; }
+                // Initialize charts after DOM update
+                setTimeout(() => {
                     const ctx1 = document.getElementById('pressureTrendChart').getContext('2d');
                     pressureTrendChart = new Chart(ctx1, {
                         type: 'line',
@@ -1171,6 +1175,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: { labels: { color: '#fff', font: { weight: 'bold' } } },
                                 title: { display: true, text: 'Pressure Trend (Bar)', color: '#fff', font: { size: 18, weight: 'bold' } }
@@ -1178,11 +1183,10 @@
                             scales: {
                                 x: { ticks: { color: '#aaa' }, grid: { color: 'rgba(80,90,120,0.18)' } },
                                 y: { min: 0, max: 10, ticks: { color: '#fff' }, grid: { color: 'rgba(80,90,120,0.18)' } }
-                            }
+                            },
+                            animation: false,
                         }
                     });
-                }
-                if (!speedBarChart) {
                     const ctx2 = document.getElementById('speedBarChart').getContext('2d');
                     speedBarChart = new Chart(ctx2, {
                         type: 'bar',
@@ -1207,6 +1211,7 @@
                         },
                         options: {
                             responsive: true,
+                            maintainAspectRatio: false,
                             plugins: {
                                 legend: { labels: { color: '#fff', font: { weight: 'bold' } } },
                                 title: { display: true, text: 'Pump Speed (Hz)', color: '#fff', font: { size: 18, weight: 'bold' } }
@@ -1214,10 +1219,11 @@
                             scales: {
                                 x: { ticks: { color: '#aaa' }, grid: { color: 'rgba(80,90,120,0.18)' } },
                                 y: { min: 0, max: 50, ticks: { color: '#fff' }, grid: { color: 'rgba(80,90,120,0.18)' } }
-                            }
+                            },
+                            animation: false,
                         }
                     });
-                }
+                }, 50);
             }
             if (window.innerWidth <= 1024) toggleSidebar();
         }
