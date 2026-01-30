@@ -775,15 +775,7 @@
                 <span class="sidebar-brand">Challawa</span>
             </div>
             <nav class="sidebar-nav">
-                <p class="nav-section-label">MONITORING</p>
-                <a href="#" class="nav-item active" onclick="showView('dashboard', event)">
-                    <span class="nav-icon">📊</span>
-                    <span class="nav-label">Dashboard</span>
-                </a>
-                <a href="#" class="nav-item" onclick="showView('reports', event)">
-                    <span class="nav-icon">📋</span>
-                    <span class="nav-label">Reports</span>
-                </a>
+                <!-- Navigation moved to top of main content -->
             </nav>
             <div class="sidebar-footer">
                 <button class="collapse-btn" onclick="toggleCollapse()">
@@ -810,6 +802,10 @@
             </header>
             <div class="dashboard-content">
                 <div class="view active" id="dashboardView">
+                    <div class="top-nav-btns" style="display: flex; gap: 12px; margin-bottom: 18px; justify-content: flex-start;">
+                        <button id="dashboardNavBtn" class="btn btn-primary nav-btn active" onclick="showView('dashboard', event)">Dashboard</button>
+                        <button id="reportsNavBtn" class="btn btn-secondary nav-btn" onclick="showView('reports', event)">Reports</button>
+                    </div>
                     <h1 class="page-title">CHALLAWA COLD PUMP NEW PANEL DASHBOARD</h1>
                     <p class="page-subtitle">Real-time monitoring of LINE 7 pump systems</p>
                     <div class="alert-card error" id="alarmAlert" style="display: none;">
@@ -952,6 +948,10 @@
                     </div>
                 </div>
                 <div class="view" id="reportsView">
+                    <div class="top-nav-btns" style="display: flex; gap: 12px; margin-bottom: 18px; justify-content: flex-start;">
+                        <button id="dashboardNavBtn2" class="btn btn-secondary nav-btn" onclick="showView('dashboard', event)">Dashboard</button>
+                        <button id="reportsNavBtn2" class="btn btn-primary nav-btn active" onclick="showView('reports', event)">Reports</button>
+                    </div>
                     <div class="section-header">
                         <p class="section-label">ANALYTICS</p>
                         <h2 class="section-title" style="font-weight:bold;">Telemetry <span class="text-primary">Reports</span></h2>
@@ -1126,8 +1126,19 @@
         window.reportsViewActive = false;
         function showView(view, event) {
             if (event) event.preventDefault();
-            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-            if (event) event.target.closest('.nav-item').classList.add('active');
+            // Update nav button active states (top nav)
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active', 'btn-primary', 'btn-secondary'));
+            if (view === 'dashboard') {
+                document.getElementById('dashboardNavBtn').classList.add('active', 'btn-primary');
+                document.getElementById('reportsNavBtn').classList.add('btn-secondary');
+                document.getElementById('dashboardNavBtn2').classList.add('active', 'btn-primary');
+                document.getElementById('reportsNavBtn2').classList.add('btn-secondary');
+            } else {
+                document.getElementById('dashboardNavBtn').classList.add('btn-secondary');
+                document.getElementById('reportsNavBtn').classList.add('active', 'btn-primary');
+                document.getElementById('dashboardNavBtn2').classList.add('btn-secondary');
+                document.getElementById('reportsNavBtn2').classList.add('active', 'btn-primary');
+            }
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(view + 'View').classList.add('active');
             window.reportsViewActive = (view === 'reports');
