@@ -727,11 +727,11 @@
             .filter-group input, .filter-group select { width: 100%; }
             .filter-actions { margin-left: 0; flex-direction: column; gap: 6px; }
             .btn { width: 100%; }
-            /* ReportsView glass widgets row: force row direction and side by side */
-            .reports-glass-row { display: flex !important; flex-direction: row !important; gap: 8px !important; flex-wrap: nowrap !important; }
-            .reports-glass-row .glass-widget { min-width: 0 !important; flex: 1 1 0 !important; }
-            /* Make charts full width on mobile */
-            .reports-chart { width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; margin-left: 0 !important; margin-right: 0 !important; }
+            /* ReportsView glass widgets row: stack vertically on mobile */
+            .reports-glass-row { display: flex !important; flex-direction: column !important; gap: 12px !important; flex-wrap: nowrap !important; width: 100% !important; }
+            .reports-glass-row .glass-widget { min-width: 0 !important; width: 100% !important; flex: none !important; }
+            /* Make charts full width and stack vertically on mobile */
+            .reports-chart { width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; margin-left: 0 !important; margin-right: 0 !important; margin-bottom: 16px !important; }
             .page-title { font-size: 20px; }
             .section-title { font-size: 20px; }
             .metric-value { font-size: 20px; }
@@ -980,24 +980,24 @@
                         </div>
                     </div>
                     <!-- Glassmorphism widgets -->
-                    <div class="reports-glass-row" style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: nowrap;">
-                        <div class="glass-widget" style="flex:1; min-width:120px; background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center;">
+                    <div class="reports-glass-row" style="display: flex; gap: 24px; margin-bottom: 24px; flex-wrap: nowrap; width: 100%;">
+                        <div class="glass-widget" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center; width:100%; min-width:0; margin-bottom:0;">
                             <div style="font-size:16px; color:#6ee7f7; margin-bottom:8px;">Current Pressure</div>
                             <div id="currentPressure" style="font-size:40px; font-weight:bold; color:#fff; text-shadow:0 0 16px #6ee7f7cc;">--</div>
                             <div style="font-size:18px; color:#6ee7f7;">Bar</div>
                         </div>
-                        <div class="glass-widget" style="flex:1; min-width:120px; background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center;">
+                        <div class="glass-widget" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; display:flex; flex-direction:column; align-items:center; width:100%; min-width:0; margin-bottom:0;">
                             <div style="font-size:16px; color:#a78bfa; margin-bottom:8px;">Current Frequency</div>
                             <div id="currentFrequency" style="font-size:40px; font-weight:bold; color:#fff; text-shadow:0 0 16px #a78bfa99;">--</div>
                             <div style="font-size:18px; color:#a78bfa;">Hz</div>
                         </div>
                     </div>
                     <!-- Central Trend Line Chart -->
-                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:24px; width:100%; min-width:0; box-sizing:border-box;">
+                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:16px; width:100%; min-width:0; box-sizing:border-box;">
                         <canvas id="pressureTrendChart" height="120"></canvas>
                     </div>
                     <!-- Vertical Bar Chart for Speed -->
-                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:24px; width:100%; min-width:0; box-sizing:border-box;">
+                    <div class="reports-chart" style="background:rgba(24,28,40,0.7); border-radius:18px; box-shadow:0 8px 32px 0 rgba(16,24,40,0.45); backdrop-filter:blur(18px); padding:24px; margin-bottom:16px; width:100%; min-width:0; box-sizing:border-box;">
                         <canvas id="speedBarChart" height="120"></canvas>
                     </div>
                     <div class="health-grid animate-in" id="healthGrid"></div>
